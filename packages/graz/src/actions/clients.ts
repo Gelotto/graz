@@ -3,7 +3,7 @@ import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import type { OfflineDirectSigner, OfflineSigner } from "@cosmjs/proto-signing";
 import type { SigningStargateClientOptions } from "@cosmjs/stargate";
 import { SigningStargateClient } from "@cosmjs/stargate";
-import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
+import { Tendermint34Client, Tendermint37Client } from "@cosmjs/tendermint-rpc";
 
 import type { GrazChain } from "../chains";
 import type { GrazSessionStore } from "../store";
@@ -33,9 +33,11 @@ export const createSigningClients = async (
 ): Promise<GrazSessionStore["signingClients"]> => {
   const { rpc, rpcHeaders, offlineSignerAuto, cosmWasmSignerOptions = {}, stargateSignerOptions = {} } = args;
   const endpoint: HttpEndpoint = { url: rpc, headers: { ...(rpcHeaders || {}) } };
+  const tmClient = await Tendermint37Client.connect(endpoint);
   const [cosmWasm, stargate] = await Promise.all([
-    SigningCosmWasmClient.connectWithSigner(endpoint, offlineSignerAuto, cosmWasmSignerOptions),
-    SigningStargateClient.connectWithSigner(endpoint, offlineSignerAuto, stargateSignerOptions),
+    // SigningCosmWasmClient.connectWithSigner(endpoint, offlineSignerAuto, cosmWasmSignerOptions),
+    SigningCosmWasmClient.createWithSigner(tmClient, offlineSignerAuto, cosmWasmSignerOptions),
+    SigningStargateClient.createWithSigner(tmClient, offlineSignerAuto, stargateSignerOptions),
   ]);
   return { cosmWasm, stargate };
 };

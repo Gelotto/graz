@@ -9,9 +9,10 @@ import type { ExtensionSetup } from "../../types/tendermint";
 export interface UseQueryClient {
   (): UseQueryResult<QueryClient>;
   <A extends object>(setupA: ExtensionSetup<A>): UseQueryResult<QueryClient & A>;
-  <A extends object, B extends object>(setupA: ExtensionSetup<A>, setupB: ExtensionSetup<B>): UseQueryResult<
-    QueryClient & A & B
-  >;
+  <A extends object, B extends object>(
+    setupA: ExtensionSetup<A>,
+    setupB: ExtensionSetup<B>,
+  ): UseQueryResult<QueryClient & A & B>;
   <A extends object, B extends object, C extends object>(
     setupA: ExtensionSetup<A>,
     setupB: ExtensionSetup<B>,
